@@ -289,7 +289,3 @@ async def on_message(message):
 #client.run(discordBotToken)
 
 '''
-
-add_player("IanG")
-add_player("ElieC")
-game_input(datetime.now(), "ElieC", "IanG", 4, 3, 0)
