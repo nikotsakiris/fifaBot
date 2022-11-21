@@ -307,7 +307,7 @@ async def on_message(message):
             else:
                 name2 = None
             
-            if text[1] not in valid_players or text[2] not in valid_players.add(None):
+            if name1 not in valid_players or name2 not in valid_players.add(None):
                 output = 'Missing player: one or both of the player names are not in the database. Initialize the new player or check spelling.'
             else:
                 output = display_head_to_head(name1, name2)   
