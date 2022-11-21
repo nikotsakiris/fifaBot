@@ -272,7 +272,7 @@ async def on_message(message):
         else:
             output = "Added game!"
         scores = text[3].split("-")
-        game_input(datetime.now(), text[1], text[2], scores[0], scores[1], 0) #FIX
+        game_input(datetime.now(), text[1], text[2], scores[0], scores[1]) #FIX
         await message.channel.send(output)
         #!game (winner name) (loser name) (score-score) (0,1,2)
 
@@ -298,7 +298,7 @@ async def on_message(message):
     if message.content.startswith('!stats'):
         valid_players = get_player_names()
         text = message.content.split(" ")
-        if len(text) != 2 or len(text) != 3:
+        if len(text) not in [2,3]:
             output = 'Error in formatting the message: should be of the format "!stats (name1) (option: name2)"'
         else:
             name1 = text[1]
