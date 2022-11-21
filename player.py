@@ -15,4 +15,4 @@ class Player:
         return [self.wins, self.losses]
 
     def __repr__(self) -> str:
-        return f"{type(self).__name__}(name={self.name}, elo={self.elo})"
+        return f"{type(self).__name__}(name={self.name}, elo={self.elo}, wins={self.wins}, losses={self.losses}, games_played={self.games_played})"
