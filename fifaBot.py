@@ -360,8 +360,3 @@ async def on_message(message):
 
 client.run(discordBotToken)
 
-
-add_player("ElieC")
-add_player("IanG")
-print(display_head_to_head("ElieC", "IanG"))
-print(display_head_to_head("IanG", "ElieC"))
