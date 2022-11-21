@@ -290,7 +290,7 @@ async def on_message(message):
     if message.content.startswith('!game'):
         valid_players = get_player_names()
         text = message.content.split(" ")
-        if len(text) != 3:
+        if len(text) != 4:
             output = 'Error in formatting the message: should be of the format "!game (winner name) (loser name) (score-score)"'
         elif text[1] not in valid_players or text[2] not in valid_players:
             output = 'Missing player: one or both of the player names are not in the database. Initialize the new player or check spelling.'
@@ -301,7 +301,7 @@ async def on_message(message):
                 output = "Change your names and scores around: winner should come first!"
             else:
                 output = game_input(datetime.now(), text[1], text[2], scores[0], scores[1]) #FIX
-        await message.channel.send(output)
+        await message.channel.send(f'`{output}`')
         #!game (winner name) (loser name) (score-score) (0,1,2)
 
     #input a fifa score
@@ -309,7 +309,7 @@ async def on_message(message):
         valid_players = get_player_names()
         text = message.content.split(" ")
         if len(text) != 6:
-            output = 'Error in formatting the message: should be of the format "!game (winner name) (loser name) (score-score)"'
+            output = 'Error in formatting the message: should be of the format "!game (winner1 name) (winner2 name) (loser1 name) (loser2 name) (score-score)"'
         elif text[1] not in valid_players or text[2] not in valid_players or text[3] not in valid_players or text[4] not in valid_players:
             output = 'Missing player: one or multiple player names are not in the database. Initialize the new player or check spelling.'
         else:
@@ -319,7 +319,7 @@ async def on_message(message):
                 output = "Change your names and scores around: winner should come first!"
             else:
                 output = team_game_input(datetime.now(), text[1], text[2], text[3], text[4], scores[0], scores[1]) #FIX
-        await message.channel.send(output)
+        await message.channel.send(f'`{output}`')
         #!game (winner name) (loser name) (score-score) (0,1,2)
 
 
@@ -342,7 +342,7 @@ async def on_message(message):
                 output = display_head_to_head(text[1], text[2])
         else:
             output = 'Error in formatting the message: should be of the format "!stats (playername) optional(playername)"'
-        await message.channel.send(output)
+        await message.channel.send(f'`{output}`')
         #!stats (winner name) (option: loser name)
 
     #get help
@@ -361,12 +361,12 @@ async def on_message(message):
             output = 'Added! '+output
         else:
             output = "player already in database"
-        await message.channel.send(output)
+        await message.channel.send(f'`{output}`')
         #!add new player
     
     #return leaderboard
     if message.content.startswith('!leaderboard'):
-        await message.channel.send(output_leaderboard())
+        await message.channel.send(f'`{output_leaderboard()}`')
         #!leaderboard
 
 client.run(discordBotToken)
