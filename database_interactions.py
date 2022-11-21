@@ -135,3 +135,15 @@ def add_game(winner:str, loser:str, scores:list, time: datetime):
     collection.insert_one(info)
     pass
 
+def update_player_in_mongo(player :Player) -> None:
+    db = get_database()
+    collection = db["Players"]
+    collection.find_one_and_update(
+        {"name" : player.name}, 
+        {"$set" : { 
+            "elo" : player.elo, 
+            "games_played" : player.games_played,
+            "wins" : player.wins,
+            "losses" : player.losses
+        }}
+    )

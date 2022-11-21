@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 from player import Player
 from game import Game
 from database_interactions import download_player, download_players, add_player, get_player_names
-from database_interactions import update_head_to_head, get_hashable_key, get_database
+from database_interactions import update_head_to_head, get_hashable_key, get_database, update_player_in_mongo
 import os
 
 
@@ -104,18 +104,7 @@ def update_player_info(player1, player2, game):
 
         
 
-def update_player_in_mongo(player :Player) -> None:
-    db = get_database()
-    collection = db["Players"]
-    collection.find_one_and_update(
-        {"name" : player.name}, 
-        {"$set" : { 
-            "elo" : player.elo, 
-            "games_played" : player.games_played,
-            "wins" : player.wins,
-            "losses" : player.losses
-        }}
-    )
+
 
 
 
