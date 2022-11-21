@@ -67,7 +67,8 @@ def output_leaderboard():
     return_string = "Current Leaderboard: \n"
     for player_tuple in tuple_list:
         player = player_tuple[0]
-        return_string += str(player.name) + ": " + str(player.elo) + " (wins: "+str(player.wins)+", losses: "+str(player.losses)+", games played: "+str(player.games_played)+") \n"
+        return_string += str(player.name) + ": " + str(player.elo) + " (wins: "+str(player.wins)+", losses: "
+        return_string += str(player.losses)+", games played: "+str(player.games_played)+") \n"
     return return_string
 
 def sort_list(list):
@@ -249,7 +250,28 @@ def display_player(player_name : str):
 # Discord input functions
 #handle errors
 discordBotToken = os.environ.get('discordBotToken')
-helpMessage = 'Commands: \n\n LEADERBOARD \n “!leaderboard” \n See the leaderboard of the best and worst members of Sigma United. \n \n ADD GAME \n "!game (winner name) (loser name) (winner goals)-(loser goals)” \n Add a new game. Input winner and loser names, and goals scored. \n \n STATS \n “!stats (player 1) (optional player2)” \n Check your stats. Add two names for head to head, and one name for your record. \n \n NEW PLAYER \n “!newplayer (name)” \n Add a new player to the fifa rankings. \n \n HELP \n “!help” \n This is your help!'
+helpMessage = '''**Commands:** \n
+\n 
+**LEADERBOARD** \n 
+*“!leaderboard”* \n 
+See the leaderboard of the best and worst members of Sigma United. \n 
+\n 
+**ADD GAME** \n 
+Singles game: *"!game (winner name) (loser name) (winner goals)-(loser goals)”* \n 
+Doubles game: *"!game (winner #1 name) (winner #2 name)) (loser #1 name) (loser #2 name) (winner goals)-(loser goals)”* \n
+Add a new game. Input winner and loser names, and goals scored. \n 
+\n 
+**STATS** \n 
+*“!stats (player 1) (optional player2)”* \n 
+Check your stats. Add two names for head to head, and one name for your record. \n 
+\n 
+**NEW PLAYER** \n 
+*“!newplayer (name)”* \n 
+Add a new player to the fifa rankings. \n 
+\n 
+**HELP** \n 
+*“!help”* \n 
+This is your help!'''
 intents = discord.Intents.default()
 intents.messages = True
 intents.message_content = True
@@ -268,7 +290,7 @@ async def on_message(message):
     if message.content.startswith('!game'):
         valid_players = get_player_names()
         text = message.content.split(" ")
-        if len(text) != 4:
+        if len(text) != 3:
             output = 'Error in formatting the message: should be of the format "!game (winner name) (loser name) (score-score)"'
         elif text[1] not in valid_players or text[2] not in valid_players:
             output = 'Missing player: one or both of the player names are not in the database. Initialize the new player or check spelling.'
@@ -278,25 +300,26 @@ async def on_message(message):
             if int(scores[0]) < int(scores[1]):
                 output = "Change your names and scores around: winner should come first!"
             else:
-                game_input(datetime.now(), text[1], text[2], scores[0], scores[1]) #FIX
+                output = game_input(datetime.now(), text[1], text[2], scores[0], scores[1]) #FIX
         await message.channel.send(output)
         #!game (winner name) (loser name) (score-score) (0,1,2)
 
     #input a fifa score
-    # if message.content.startswith('!twogame'):
-    #     valid_players = get_player_names()
-    #     text = message.content.split(" ")
-    #     if len(text) != 5:
-    #         output = 'Error in formatting the message: should be of the format "!game (winner name) (loser name) (score-score) (0,1,2)"'
-    #     elif text[1] not in valid_players or text[2] not in valid_players:
-    #         output = 'Missing player: one or both of the player names are not in the database. Initialize the new player or check spelling.'
-    #     elif text[4] not in (0, 1, 2):
-    #         output = 'Error in formatting the message: should be of the format "!game (winner name) (loser name) (score-score) (0,1,2)"'
-    #     else:
-    #         output = "Added game!"
-    #     scores = [text[3].split("-")]
-    #     game_input(datetime.now(), text[1], text[2], scores[0], scores[1], text[4]) #FIX
-    #     await message.channel.send(output)
+    if message.content.startswith('!twogame'):
+        valid_players = get_player_names()
+        text = message.content.split(" ")
+        if len(text) != 6:
+            output = 'Error in formatting the message: should be of the format "!game (winner name) (loser name) (score-score)"'
+        elif text[1] not in valid_players or text[2] not in valid_players or text[3] not in valid_players or text[4] not in valid_players:
+            output = 'Missing player: one or multiple player names are not in the database. Initialize the new player or check spelling.'
+        else:
+            output = "Added game!"
+            scores = text[5].split("-")
+            if int(scores[0]) < int(scores[1]):
+                output = "Change your names and scores around: winner should come first!"
+            else:
+                output = team_game_input(datetime.now(), text[1], text[2], text[3], text[4], scores[0], scores[1]) #FIX
+        await message.channel.send(output)
         #!game (winner name) (loser name) (score-score) (0,1,2)
 
 
@@ -329,12 +352,15 @@ async def on_message(message):
 
     #add a new player
     if message.content.startswith('!newplayer'):
+        valid_players = get_player_names()
         if len(message.content.split(' ')) != 2:
             output = 'Error in formatting the message: should be of the format "!newplayer (playername)"'
-        else: 
+        elif text[1] not in valid_players: 
             command, output = message.content.split(' ')
             add_player(output)
             output = 'Added! '+output
+        else:
+            output = "player already in database"
         await message.channel.send(output)
         #!add new player
     
