@@ -60,7 +60,7 @@ def output_leaderboard():
     playerList = download_players()
     tuple_list = []
     for player in playerList:
-        tuple_list.append(player, player.elo)
+        tuple_list.append((player, player.elo))
     
     tuple_list = sort_list(tuple_list)
     
