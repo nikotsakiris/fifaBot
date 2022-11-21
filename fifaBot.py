@@ -284,12 +284,12 @@ async def on_message(message):
         elif text[1] not in valid_players or text[2] not in valid_players:
             output = 'Missing player: one or both of the player names are not in the database. Initialize the new player or check spelling.'
         else:
-            output = "Added game!"
+            output = f'{text[2]} got shit on!'
             scores = text[3].split("-")
             if int(scores[0]) < int(scores[1]):
                 output = "Change your names and scores around: winner should come first!"
             else:
-                output = game_input(datetime.now(), text[1], text[2], scores[0], scores[1]) #FIX
+                game_input(datetime.now(), text[1], text[2], scores[0], scores[1]) #FIX
         await message.channel.send(f'`{output}`')
         #!game (winner name) (loser name) (score-score) (0,1,2)
 
