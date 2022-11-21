@@ -16,7 +16,7 @@ https://www.freecodecamp.org/news/create-a-discord-bot-with-python/
 
 #Link to basic instructions for bot ^^
 starting_elo = 1500
-k_factor = 10
+k_factor = 20
 elo_denom = 400
 
 #Player & Game Class
@@ -51,7 +51,6 @@ class Game:
         self.loser = loser #'player_name'
         self.winner_score = winner_score
         self.loser_score = loser_score
-        self.time_period = when_won #regular-0, et-1, penalties-2 (add 1 goal to winning team for pens)
 
     def __repr__(self) -> str:
         return f"{type(self).__name__}(date={self.date}, winner={self.winner}, loser={self.loser})"
@@ -186,38 +185,101 @@ def add_player(player_name:str) -> None:
     
 
 #add a game to the database by creating an instance and uploading
-def add_game(winner:str, loser:str, scores:list[int], endtime:int, time: datetime):
+def add_game(winner:str, loser:str, scores:list, time: datetime):
     db = get_database()
     collection = db["Games"]
     info = {
         "date" : time,
         "winner" : winner,
         "loser" : loser,
-        "time_period" : endtime,
         "winner_score" : scores[0],
         "loser_score" : scores[1]
     }
     collection.insert_one(info)
     pass
 
-def game_input(date, winner, loser, winner_score, loser_score, time_period):
-    game = Game(date, winner, loser, winner_score, loser_score, time_period)
-    add_game(winner, loser, [winner_score, loser_score], time_period, date)
+def get_hashable_key(winner: str, loser: str) -> str:
+    key_list = [winner, loser]
+    key_list.sort()
+    return key_list[0] + "-" + key_list[1]
+
+
+def update_head_to_head(winner, loser) -> str:
+    key = get_hashable_key(winner, loser)
+    db = get_database()
+    collection = db["HeadToHead"]
+    sorted_users = [winner, loser].sort()
+    item = collection.find_one( {"key" : key })
+    if (not item):
+        #head to head record has not been established, creating one now
+        if (winner == sorted_users[0]):
+            #if the winner comes first in alphabetical order
+            #add 1 win to user 1
+            info = {
+                "key" : key, 
+                "user1" : sorted_users[0], 
+                "user2": sorted_users[1],
+                "user1wins": 1,
+                "user2wins" : 0, 
+            }
+            collection.insert_one(info)
+        else:
+            #the winner comes second in alphabetical order
+            info = {
+                "key" : key, 
+                "user1" : sorted_users[0], 
+                "user2": sorted_users[1],
+                "user1wins": 0,
+                "user2wins" : 1, 
+            }
+            collection.insert_one(info)
+    else: #record already exists
+        if (winner == sorted_users[0]):
+            collection.find_one_and_update(
+                {"key" : key},
+                {"$inc":
+                    {"user1wins" : 1}
+                }
+            )
+        else:
+            collection.find_one_and_update(
+                {"key" : key},
+                {"$inc":
+                    {"user2wins" : 1}
+                }
+            )
+
+def display_head_to_head(player1, player2):
+    key = get_hashable_key(player1,player2)
+    db = get_database()
+    collection = db["HeadToHead"]
+    item = collection.find_one( {"key" : key })
+    if player1 == item["user1"]:
+        return player1 + "-" + player2 + ": " + item["user1wins"] + "-" + item["user2wins"]
+    elif player2 == item["user2"]:
+        return player1 + "-" + player2 + ": " + item["user1wins"] + "-" + item["user2wins"]
+    
+    
+    return player1 + "-" + player2 + ": " + item
+
+
+def game_input(date, winner, loser, winner_score, loser_score):
+    game = Game(date, winner, loser, winner_score, loser_score)
+    add_game(winner, loser, [winner_score, loser_score], date)
     players = [download_player(winner), download_player(loser)]
     update_player_info(players[0], players[1], game)
     update_player_in_mongo(players[0])
     update_player_in_mongo(players[1])
+    update_head_to_head(winner, loser)
 
 #return string the bot should send when checking stats
 def get_stats(name1:str, name2=None):
     pass
 
 
-'''
-
 # Discord input functions
 #handle errors
-discordBotToken = ''
+discordBotToken = 'MTA0Mzk3NjA4NjMxNDI5MTMwMA.GGM7IT.Q1RmVPA7jkVQIG_5QTcLudDRNx3IIY3_sZpEQ0'
 helpMessage = 'Commands: \n\n LEADERBOARD \n “!leaderboard” \n See the leaderboard of the best and worst members of Sigma United. \n \n ADD GAME \n "!game (winner name) (loser name) (winner goals)-(loser goals) (game_ended)” \n Add a new game. Input winner and loser names, goals scored, and game_ended time: 0 if it ended in regulation, 1 if it ended in extra time, and 2 if it ended in penalty kicks. \n \n STATS \n “!stats (player 1) (optional player2)” \n Check your stats. Add two names for head to head, and one name for your record. \n \n NEW PLAYER \n “!newplayer (name)” \n Add a new player to the fifa rankings. \n \n HELP \n “!help” \n This is your help!'
 client = discord.Client();
 
@@ -242,7 +304,8 @@ async def on_message(message):
             output = 'Error in formatting the message: should be of the format "!game (winner name) (loser name) (score-score) (0,1,2)"'
         else:
             output = "Added game!"
-        game_input(text[1], text[2], [text[3].split("-")], text[4], datetime.now) #FIX
+        scores = [text[3].split("-")]
+        game_input(datetime.now(), text[1], text[2], scores[0], scores[1], text[4]) #FIX
         await message.channel.send(output)
         #!game (winner name) (loser name) (score-score) (0,1,2)
 
@@ -286,6 +349,8 @@ async def on_message(message):
         await message.channel.send(output_leaderboard())
         #!leaderboard
 
-#client.run(discordBotToken)
+client.run(discordBotToken)
 
-'''
+add_player("ElieC")
+add_player("Ian")
+add_game("Ian", "ElieC", [5,4], datetime.now())
