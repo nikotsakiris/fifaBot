@@ -1,5 +1,4 @@
 from player import Player
-from pymongo_get_database import get_database
 from fifaBot import starting_elo
 from datetime import datetime
 from pymongo import MongoClient
