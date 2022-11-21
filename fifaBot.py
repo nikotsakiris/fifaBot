@@ -8,6 +8,7 @@ from database_interactions import download_player, download_players, add_player,
 from database_interactions import update_head_to_head, get_hashable_key, get_database
 import os
 
+
 '''
 pip3 install discord
 pip3 install "pymongo[srv]"
@@ -275,6 +276,24 @@ async def on_message(message):
         game_input(datetime.now(), text[1], text[2], scores[0], scores[1], text[4]) #FIX
         await message.channel.send(output)
         #!game (winner name) (loser name) (score-score) (0,1,2)
+
+    #input a fifa score
+    # if message.content.startswith('!twogame'):
+    #     valid_players = get_player_names()
+    #     text = message.content.split(" ")
+    #     if len(text) != 5:
+    #         output = 'Error in formatting the message: should be of the format "!game (winner name) (loser name) (score-score) (0,1,2)"'
+    #     elif text[1] not in valid_players or text[2] not in valid_players:
+    #         output = 'Missing player: one or both of the player names are not in the database. Initialize the new player or check spelling.'
+    #     elif text[4] not in (0, 1, 2):
+    #         output = 'Error in formatting the message: should be of the format "!game (winner name) (loser name) (score-score) (0,1,2)"'
+    #     else:
+    #         output = "Added game!"
+    #     scores = [text[3].split("-")]
+    #     game_input(datetime.now(), text[1], text[2], scores[0], scores[1], text[4]) #FIX
+    #     await message.channel.send(output)
+        #!game (winner name) (loser name) (score-score) (0,1,2)
+
 
     #get stats output
     if message.content.startswith('!stats'):
