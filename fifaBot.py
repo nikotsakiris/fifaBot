@@ -67,7 +67,7 @@ def output_leaderboard():
     return_string = "Current Leaderboard: \n"
     for player_tuple in tuple_list:
         player = player_tuple[0]
-        return_string += str(player.name) + ": " + str(player.elo) + " (wins: "+str(player.wins)+", losses: "+str(player.losses)+", games played: "+str(player.games_played)+" \n"
+        return_string += str(player.name) + ": " + str(player.elo) + " (wins: "+str(player.wins)+", losses: "+str(player.losses)+", games played: "+str(player.games_played)+") \n"
     return return_string
 
 def sort_list(list):
@@ -273,7 +273,7 @@ async def on_message(message):
         else:
             output = "Added game!"
         scores = [text[3].split("-")]
-        game_input(datetime.now(), text[1], text[2], scores[0], scores[1], text[4]) #FIX
+        game_input(datetime.now(), text[1], text[2], scores[0], scores[1], 0) #FIX
         await message.channel.send(output)
         #!game (winner name) (loser name) (score-score) (0,1,2)
 
@@ -311,7 +311,7 @@ async def on_message(message):
             if text[1] not in valid_players or text[2] not in valid_players.add(None):
                 output = 'Missing player: one or both of the player names are not in the database. Initialize the new player or check spelling.'
             else:
-                output = get_stats(name1, name2)   
+                output = display_head_to_head(name1, name2)   
         await message.channel.send(output)
         #!stats (winner name) (option: loser name)
 
