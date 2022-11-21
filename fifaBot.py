@@ -272,11 +272,13 @@ async def on_message(message):
             output = 'Error in formatting the message: should be of the format "!game (winner name) (loser name) (score-score)"'
         elif text[1] not in valid_players or text[2] not in valid_players:
             output = 'Missing player: one or both of the player names are not in the database. Initialize the new player or check spelling.'
-        
         else:
             output = "Added game!"
-        scores = text[3].split("-")
-        game_input(datetime.now(), text[1], text[2], scores[0], scores[1]) #FIX
+            scores = text[3].split("-")
+            if int(scores[0]) < int(scores[1]):
+                output = "Change your names and scores around: winner should come first!"
+            else:
+                game_input(datetime.now(), text[1], text[2], scores[0], scores[1]) #FIX
         await message.channel.send(output)
         #!game (winner name) (loser name) (score-score) (0,1,2)
 
