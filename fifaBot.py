@@ -239,27 +239,27 @@ def display_player(player_name : str):
 # Discord input functions
 #handle errors
 discordBotToken = os.environ.get('discordBotToken')
-helpMessage = '''**Commands:** \n
-\n 
-**LEADERBOARD** \n 
-*“!leaderboard”* \n 
-See the leaderboard of the best and worst members of Sigma United. \n 
-\n 
-**ADD GAME** \n 
-Singles game: *"!game (winner name) (loser name) (winner goals)-(loser goals)”* \n 
-Doubles game: *"!game (winner #1 name) (winner #2 name)) (loser #1 name) (loser #2 name) (winner goals)-(loser goals)”* \n
-Add a new game. Input winner and loser names, and goals scored. \n 
-\n 
-**STATS** \n 
-*“!stats (player 1) (optional player2)”* \n 
-Check your stats. Add two names for head to head, and one name for your record. \n 
-\n 
-**NEW PLAYER** \n 
-*“!newplayer (name)”* \n 
-Add a new player to the fifa rankings. \n 
-\n 
-**HELP** \n 
-*“!help”* \n 
+helpMessage = '''**Commands:**
+
+**LEADERBOARD**
+*“!leaderboard”*
+See the leaderboard of the best and worst members of Sigma United.
+
+**ADD GAME**
+Singles game: *"!game (winner name) (loser name) (winner goals)-(loser goals)”*
+Doubles game: *"!game (winner #1 name) (winner #2 name)) (loser #1 name) (loser #2 name) (winner goals)-(loser goals)”* 
+Add a new game. Input winner and loser names, and goals scored.  
+
+**STATS** 
+*“!stats (player 1) (optional player2)”* 
+Check your stats. Add two names for head to head, and one name for your record. 
+
+**NEW PLAYER** 
+*“!newplayer (name)”* 
+Add a new player to the fifa rankings. 
+
+**HELP** 
+*“!help”* 
 This is your help!'''
 intents = discord.Intents.default()
 intents.messages = True
@@ -342,7 +342,8 @@ async def on_message(message):
     #add a new player
     if message.content.startswith('!newplayer'):
         valid_players = get_player_names()
-        if len(message.content.split(' ')) != 2:
+        text = message.content.split(' ')
+        if len(text) != 2:
             output = 'Error in formatting the message: should be of the format "!newplayer (playername)"'
         elif text[1] not in valid_players: 
             command, output = message.content.split(' ')
