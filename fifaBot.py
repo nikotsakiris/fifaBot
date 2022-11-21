@@ -281,7 +281,7 @@ def get_stats(name1:str, name2=None):
 #handle errors
 discordBotToken = 'MTA0Mzk3NjA4NjMxNDI5MTMwMA.GGM7IT.Q1RmVPA7jkVQIG_5QTcLudDRNx3IIY3_sZpEQ0'
 helpMessage = 'Commands: \n\n LEADERBOARD \n “!leaderboard” \n See the leaderboard of the best and worst members of Sigma United. \n \n ADD GAME \n "!game (winner name) (loser name) (winner goals)-(loser goals) (game_ended)” \n Add a new game. Input winner and loser names, goals scored, and game_ended time: 0 if it ended in regulation, 1 if it ended in extra time, and 2 if it ended in penalty kicks. \n \n STATS \n “!stats (player 1) (optional player2)” \n Check your stats. Add two names for head to head, and one name for your record. \n \n NEW PLAYER \n “!newplayer (name)” \n Add a new player to the fifa rankings. \n \n HELP \n “!help” \n This is your help!'
-client = discord.Client();
+client = discord.Client()
 
 @client.event
 async def on_ready():
