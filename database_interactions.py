@@ -1,7 +1,8 @@
 from player import Player
-from fifaBot import starting_elo
 from datetime import datetime
 from pymongo import MongoClient
+
+starting_elo = 1500
 
 def get_database():
 
