@@ -2,6 +2,32 @@ from player import Player
 from pymongo_get_database import get_database
 from fifaBot import starting_elo
 from datetime import datetime
+from pymongo import MongoClient
+
+def get_database():
+
+   '''
+   MongoDB bot user:
+   username: fifaBot
+   password: UlG5lHLkhVEhul79
+   CONNECTION_STRING: "mongodb+srv://fifaBot:UlG5lHLkhVEhul79@fifa-scores.qdj1pi4.mongodb.net/?retryWrites=true&w=majority"
+   ''' 
+ 
+   # Provide the mongodb atlas url to connect python to mongodb using pymongo
+   CONNECTION_STRING = "mongodb+srv://fifaBot:UlG5lHLkhVEhul79@fifa-scores.qdj1pi4.mongodb.net/?retryWrites=true&w=majority"
+ 
+   # Create a connection using MongoClient. You can import MongoClient or use pymongo.MongoClient
+   client = MongoClient(CONNECTION_STRING)
+ 
+   return client['Fifa-Scores']
+  
+# This is added so that many files can reuse the function get_database()
+if __name__ == "__main__":   
+  
+   # Get the database
+   dbname = get_database()
+
+
 
 def download_player(name: str) -> Player:
     #Takes in name of player as a string and returns that player object or throws exception
@@ -108,3 +134,4 @@ def add_game(winner:str, loser:str, scores:list, time: datetime):
     }
     collection.insert_one(info)
     pass
+

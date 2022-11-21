@@ -1,12 +1,11 @@
 import discord
 from pymongo import MongoClient
-from pymongo_get_database import get_database
 from datetime import datetime
 from dotenv import load_dotenv
 from player import Player
 from game import Game
 from database_interactions import download_player, download_players, add_player, get_player_names
-from database_interactions import update_head_to_head, get_hashable_key, add_game
+from database_interactions import update_head_to_head, get_hashable_key, add_game, get_database
 import os
 from http.server import BaseHTTPRequestHandler
 
