@@ -77,7 +77,7 @@ def output_twoleaderboard():
     db = get_database()
     collection = db["Teams"]
     teams = collection.find()
-    elo_tuples: list[tuple[any, int]]
+    elo_tuples: list[tuple[any, int]] = []
 
     for team in teams:
         elo_tuples.append((team, int(team["elo"])))
