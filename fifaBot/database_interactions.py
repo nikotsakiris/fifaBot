@@ -21,22 +21,31 @@ def get_database():
  
    return client['Fifa-Scores']
   
-# This is added so that many files can reuse the function get_database()
-if __name__ == "__main__":   
-  
-   # Get the database
-   dbname = get_database()
 
 
+def get_hashable_key(winner: str, loser: str) -> str:
+    key_list = [winner, loser]
+    key_list.sort()
+    return key_list[0] + "-" + key_list[1]
 
 def download_player(name: str) -> Player:
     #Takes in name of player as a string and returns that player object or throws exception
     db = get_database()
     collection = db['Players']
     item = collection.find_one( { "name" : name} )
-    result = Player(item["name"], int(item["elo"]), int(item["wins"]), int(item["losses"]), int(item["games_played"]))
+    result = Player(item["name"], int(item["elo"]), int(item["wins"]), int(item["losses"]), int(item["games_played"]), int(item["goals_for"]), int(item["goals_against"]), int(item["goal_differential"]))
     return result
 
+def download_team(player1:str, player2:str)->Team:
+    db = get_database()
+    collection = db['Teams']
+    key = get_hashable_key(player1, player2)
+    item = collection.find_one( {"key" : key })
+    result = Team(
+        item["player1"], item["player2"], item["elo"], item["wins"], item["losses"], item["key"], 
+            item["games_played"]
+    )
+    return result
 
 def download_players() -> list[Player]:
     result = []
@@ -44,7 +53,7 @@ def download_players() -> list[Player]:
     collection = db["Players"]
     items = collection.find()
     for item in items:
-        player_object = Player(item["name"], int(item["elo"]), int(item["wins"]), int(item["losses"]), int(item["games_played"]))
+        player_object = Player(item["name"], int(item["elo"]), int(item["wins"]), int(item["losses"]), int(item["games_played"]), int(item["goals_for"]), int(item["goals_against"]), int(item["goal_differential"]))
         result.append(player_object)
     return result
 
@@ -57,7 +66,10 @@ def add_player(player_name:str) -> None:
         "wins" : 0,
         "elo" : starting_elo,
         "losses" : 0,
-        "games_played" : 0
+        "games_played" : 0,
+        "goals_for" : 0,
+        "goals_against" : 0,
+        "goal_differential" : 0
     }
     collection.insert_one(info)
 
@@ -75,10 +87,6 @@ def add_team(player1: str, player2:str ) -> None:
     }
     collection.insert_one(info)
 
-def get_hashable_key(winner: str, loser: str) -> str:
-    key_list = [winner, loser]
-    key_list.sort()
-    return key_list[0] + "-" + key_list[1]
 
 def get_player_names() -> set[str]:
     result = set()
@@ -226,7 +234,10 @@ def update_player_in_mongo(player :Player) -> None:
             "elo" : player.elo, 
             "games_played" : player.games_played,
             "wins" : player.wins,
-            "losses" : player.losses
+            "losses" : player.losses,
+            "goals_for" : player.goals_for,
+            "goals_against" : player.goals_against,
+            "goal_differential" : player.goal_differential
         }}
     )
 
@@ -245,3 +256,8 @@ def update_team_in_mongo(team : Team) -> None:
 
     pass
   
+# This is added so that many files can reuse the function get_database()
+if __name__ == "__main__":   
+  
+   # Get the database
+   dbname = get_database()

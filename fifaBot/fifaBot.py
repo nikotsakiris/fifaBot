@@ -6,7 +6,7 @@ from .player import Player, Team
 from .game import Game
 from .database_interactions import download_player, download_players, add_player, get_player_names, add_game
 from .database_interactions import update_head_to_head, get_hashable_key, get_database, update_player_in_mongo
-from .database_interactions import add_twogame
+from .database_interactions import add_twogame, download_team, update_team_in_mongo
 import os
 
 
@@ -69,7 +69,7 @@ def output_leaderboard():
     for player_tuple in tuple_list:
         player = player_tuple[0]
         return_string += str(player.name) + ": " + str(player.elo) + " record: "+str(player.wins)+" - "
-        return_string += str(player.losses)+", gp: "+str(player.games_played)+" \n"
+        return_string += str(player.losses)+", gp: "+str(player.games_played)+", gd: "+str(player.goal_differential)+" \n"
     return return_string
 
 def sort_list(list):
@@ -89,13 +89,24 @@ def update_player_info(player1, player2, game):
     elo_deltas = calculate_elo_changes(player1.elo, player2.elo, player_1_won)
     player1.elo += int(elo_deltas[0])
     player2.elo += int(elo_deltas[1])
-    
+    goal_differential = game.winner_score - game.loser_score
+    player1.goal_differential += goal_differential
+    player2.goal_differential -= goal_differential
+
     if player_1_won: 
         player1.wins += 1
         player2.losses += 1
+        player1.goals_for += game.winner_score
+        player2.goals_against += game.winner_score
+        player1.goals_against += game.loser_score
+        player2.goals_for += game.loser_score
     else:
         player2.wins += 1
         player1.losses += 1
+        player2.goals_for += game.winner_score
+        player1.goals_against += game.winner_score
+        player2.goals_against += game.loser_score
+        player1.goals_for += game.loser_score
     
     player1.games_played += 1
     player2.games_played += 1
@@ -166,25 +177,48 @@ def game_input(date, winner, loser, winner_score, loser_score):
 
 def team_game_input(date, winner1, winner2, loser1, loser2, winner_score, loser_score):
 
-    add_game(winner1+winner2, loser1+loser2, [winner_score, loser_score], date)
+    # add_game(winner1+winner2, loser1+loser2, [winner_score, loser_score], date)
     
-    players = [download_player(winner1), download_player(winner2), download_player(loser1), download_player(loser2)]
-    update_2player_info(players[0],players[1],players[2],players[3])
+    # players = [download_player(winner1), download_player(winner2), download_player(loser1), download_player(loser2)]
+    # update_2player_info(players[0],players[1],players[2],players[3])
     
-    for i in range(4):
-        update_player_in_mongo(players[i])
+    # for i in range(4):
+    #     update_player_in_mongo(players[i])
 
 
-def update_2player_info(winner1,winner2,loser1,loser2):
-    team1_elo = (winner1.elo + winner2.elo)/2
-    team2_elo = (loser1.elo + loser2.elo)/2
+    add_twogame(winner1, winner2, loser1, loser2, date, [winner_score, loser_score])
+    winning_team = download_team(winner1, winner2)
+    losing_team = download_team(loser1, loser2)
+    update_2player_info(winning_team, losing_team)
+    update_team_in_mongo(winning_team)
+    update_team_in_mongo(losing_team)
     
-    elo_deltas = calculate_elo_changes(team1_elo,team2_elo,True)
 
-    winner1.elo += int(elo_deltas[0]/2)
-    winner2.elo += int(elo_deltas[0]/2)
-    loser1.elo += int(elo_deltas[1]/2)
-    loser2.elo += int(elo_deltas[1]/2)
+
+
+def update_2player_info(winning_team: Team, losing_team: Team) -> None:
+    # team1_elo = (winner1.elo + winner2.elo)/2
+    # team2_elo = (loser1.elo + loser2.elo)/2
+    
+    # elo_deltas = calculate_elo_changes(team1_elo,team2_elo,True)
+
+    # winner1.elo += int(elo_deltas[0]/2)
+    # winner2.elo += int(elo_deltas[0]/2)
+    # loser1.elo += int(elo_deltas[1]/2)
+    # loser2.elo += int(elo_deltas[1]/2)
+
+    winning_elo = winning_team.elo
+    losing_elo = losing_team.elo
+    elo_deltas = calculate_elo_changes(winning_elo, losing_elo, True)
+    winning_team.elo += int(elo_deltas[0])
+    losing_team.elo += int(elo_deltas[1])
+    
+    winning_team.games_played += 1
+    losing_team.games_played += 1
+    winning_team.wins += 1
+    losing_team.losses += 1
+    
+
 
 
 def display_player(player_name : str):
