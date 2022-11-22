@@ -14,7 +14,7 @@ There are many functions in the house which could be automated by a bot like thi
 # List of Brothers that have contributed to the bot
 ## Sigma Developers
 
-Elie Cuevas '25 (MIT '24) - original FIFA bot 
-Jake Jones '24 - original FIFA bot
-Nikhil Kakarla '24 - original FIFA bot
-Ian Gatlin '24 - original FIFA bot
+Elie Cuevas '25 (MIT '24) - original FIFA bot <br>
+Jake Jones '24 - original FIFA bot <br>
+Nikhil Kakarla '24 - original FIFA bot <br>
+Ian Gatlin '24 - original FIFA bot <br>
