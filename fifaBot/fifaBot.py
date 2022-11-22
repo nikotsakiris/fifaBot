@@ -148,25 +148,14 @@ def chance(player1: Player, player2: Player) -> tuple[float]:
     return (p, 1-p,)
 
 
-        
-
 def chance_teams(team1: Team, team2: Team) -> tuple[float]:
     p = calc_expected_wins(team1.elo, team2.elo)
     return (p, 1-p)
-
-
-
- 
-
-
 
 def get_hashable_key(winner: str, loser: str) -> str:
     key_list = [winner, loser]
     key_list.sort()
     return key_list[0] + "-" + key_list[1]
-
-
-
 
 def display_head_to_head(player1: str, player2 : str) -> str:
     key = get_hashable_key(player1,player2)
@@ -179,9 +168,6 @@ def display_head_to_head(player1: str, player2 : str) -> str:
         return player1 + "-" + player2 + ": " + str(item["user1wins"]) + "-" + str(item["user2wins"])
     elif player2 == item["user1"]:
         return player1 + "-" + player2 + ": " + str(item["user2wins"]) + "-" + str(item["user1wins"])
-    
-    
-    #return player1 + "-" + player2 + ": " + item
 
 
 def game_input(date, winner, loser, winner_score, loser_score):
@@ -199,15 +185,6 @@ def game_input(date, winner, loser, winner_score, loser_score):
     
 
 def team_game_input(date, winner1, winner2, loser1, loser2, winner_score, loser_score):
-
-    # add_game(winner1+winner2, loser1+loser2, [winner_score, loser_score], date)
-    
-    # players = [download_player(winner1), download_player(winner2), download_player(loser1), download_player(loser2)]
-    # update_2player_info(players[0],players[1],players[2],players[3])
-    
-    # for i in range(4):
-    #     update_player_in_mongo(players[i])
-
 
     add_twogame(winner1, winner2, loser1, loser2, date, [winner_score, loser_score])
     winning_team = download_team(winner1, winner2)
