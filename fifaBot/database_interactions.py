@@ -1,4 +1,4 @@
-from player import Player
+from player import Player, Team
 from datetime import datetime
 from pymongo import MongoClient
 
@@ -61,6 +61,20 @@ def add_player(player_name:str) -> None:
     }
     collection.insert_one(info)
 
+def add_team(player1: str, player2:str ) -> None:
+    db = get_database()
+    collection = db["Teams"]
+    info = {
+        "player1" : player1,
+        "player2" : player2,
+        "key" : get_hashable_key(player1, player2),
+        "elo" : starting_elo,
+        "wins" : 0,
+        "losses" : 0,
+        "games_played" : 0
+    }
+    collection.insert_one(info)
+
 def get_hashable_key(winner: str, loser: str) -> str:
     key_list = [winner, loser]
     key_list.sort()
@@ -75,7 +89,16 @@ def get_player_names() -> set[str]:
         result.add(player["name"])
     return result
 
-def update_head_to_head(winner, loser) -> str:
+def get_team_keys() -> set[str]:
+    result = set()
+    db = get_database()
+    collection = db["Teams"]
+    teams = collection.find()
+    for team in teams:
+        result.add(team["key"])
+    return result
+
+def update_head_to_head(winner, loser) -> None:
     key = get_hashable_key(winner, loser)
     db = get_database()
     collection = db["HeadToHead"]
@@ -121,6 +144,51 @@ def update_head_to_head(winner, loser) -> str:
                 }
             )
 
+def update_twos_head_to_head(winners: list[str], losers: list[str]) -> None:
+    db = get_database()
+    collection = db["HeadToHead"]
+    winner_key = get_hashable_key(winners[0], winners[1])
+    loser_key = get_hashable_key(losers[0], losers[1])
+    sorted_teams = [winner_key, loser_key]
+    sorted_teams.sort()
+    key = get_hashable_key(winner_key, loser_key)
+    item = collection.find_one( {"key" : key})
+    if (not item):
+        if (sorted_teams[0] == winner_key):
+            info = {
+                "key" : key,
+                "team1" : sorted_teams[0],
+                "team2" : sorted_teams[1],
+                "team1wins" : 1,
+                "team2wins" : 0
+            }
+            collection.insert_one(info)
+        else:
+            info = {
+                "key" : key,
+                "team1" : sorted_teams[0],
+                "team2" : sorted_teams[1],
+                "team1wins" : 0,
+                "team2wins" : 1
+            }
+            collection.insert_one(info)
+    else:
+        if (sorted_teams[0] == winner_key):
+            collection.find_one_and_update(
+                {"key" : key},
+                {"$inc":
+                    {"team1wins" : 1}
+                }
+            )
+        else:
+            collection.find_one_and_update(
+                {"key" : key},
+                {"$inc":
+                    {"team2wins" : 1}
+                }
+            )
+
+
 #add a game to the database by creating an instance and uploading
 def add_game(winner:str, loser:str, scores:list, time: datetime):
     db = get_database()
@@ -133,7 +201,21 @@ def add_game(winner:str, loser:str, scores:list, time: datetime):
         "loser_score" : scores[1]
     }
     collection.insert_one(info)
-    pass
+
+
+def add_twogame(winner1:str, winner2:str, loser1:str, loser2: str, time:datetime, scores:list[int]) -> None:
+    db = get_database()
+    collection = db["TwoPlayerGames"]
+    winners = get_hashable_key(winner1, winner2)
+    losers = get_hashable_key(loser1, loser2)
+    info = {
+        "date" : time,
+        "winners" : winners,
+        "losers" : losers,
+        "winner_score" : scores[0],
+        "loser_score" : scores[1]
+    }
+    collection.insert_one(info)
 
 def update_player_in_mongo(player :Player) -> None:
     db = get_database()
@@ -147,3 +229,19 @@ def update_player_in_mongo(player :Player) -> None:
             "losses" : player.losses
         }}
     )
+
+def update_team_in_mongo(team : Team) -> None:
+    db = get_database()
+    collection = db["Teams"]
+    collection.find_one_and_update(
+        {"key" : team.key},
+        { "$set" : {
+            "elo" : team.elo,
+            "games_played" : team.games_played,
+            "wins" : team.wins,
+            "losses" : team.losses
+        }}
+    )
+
+    pass
+  
