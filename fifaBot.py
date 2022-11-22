@@ -131,51 +131,7 @@ def get_hashable_key(winner: str, loser: str) -> str:
     return key_list[0] + "-" + key_list[1]
 
 
-def update_head_to_head(winner, loser) -> str:
-    key = get_hashable_key(winner, loser)
-    db = get_database()
-    collection = db["HeadToHead"]
-    sorted_users = [winner, loser]
-    sorted_users.sort()
-    item = collection.find_one( {"key" : key })
-    if (not item):
-        #head to head record has not been established, creating one now
-        if (winner == sorted_users[0]):
-            #if the winner comes first in alphabetical order
-            #add 1 win to user 1
-            info = {
-                "key" : key, 
-                "user1" : sorted_users[0], 
-                "user2": sorted_users[1],
-                "user1wins": 1,
-                "user2wins" : 0, 
-            }
-            collection.insert_one(info)
-        else:
-            #the winner comes second in alphabetical order
-            info = {
-                "key" : key, 
-                "user1" : sorted_users[0], 
-                "user2": sorted_users[1],
-                "user1wins": 0,
-                "user2wins" : 1, 
-            }
-            collection.insert_one(info)
-    else: #record already exists
-        if (winner == sorted_users[0]):
-            collection.find_one_and_update(
-                {"key" : key},
-                {"$inc":
-                    {"user1wins" : 1}
-                }
-            )
-        else:
-            collection.find_one_and_update(
-                {"key" : key},
-                {"$inc":
-                    {"user2wins" : 1}
-                }
-            )
+
 
 def display_head_to_head(player1: str, player2 : str) -> str:
     key = get_hashable_key(player1,player2)
