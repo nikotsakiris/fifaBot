@@ -2,6 +2,7 @@ import discord
 import os
 from datetime import datetime
 from fifaBot.player import Player
+from fifaBot.team import Team
 from fifaBot.fifaBot import game_input, team_game_input, display_player
 from fifaBot.fifaBot import display_head_to_head, output_leaderboard, chance
 from fifaBot.fifaBot import probability_to_moneyline
