@@ -147,6 +147,7 @@ async def on_message(message):
                 key = get_hashable_key(player1, player2)
                 if (key not in valid_teams):
                     add_team(player1, player2)
+                    output = "Added!" + player1 + ", " + player2
                 else:
                     output = "Team already initialized"
             
