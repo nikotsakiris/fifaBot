@@ -346,9 +346,9 @@ async def on_message(message):
             else:
                 p, q = chance(player1, player2)
                 p_ml, q_ml = probability_to_moneyline(p), probability_to_moneyline(q)
-                output = f'{"Names" : ^10}|{"Probability": ^10}|{"ML": ^6}'
-                output += f'{player1.name : <10}{(p*100):.1f >10}%|{"+" + p_ml if p_ml > 0 else p_ml: >6}'
-                output += f'{player2.name : <10}{(q*100):.1f >10}%|{"+" + q_ml if q_ml > 0 else q_ml: >6}'
+                output = f'{"Names" : ^10}|{"P(win)": ^6}|{"ML": ^6}'
+                output += f'{player1.name : <10}{round((p*100),1): >5}%|{"+" + p_ml if p_ml > 0 else p_ml: >6}'
+                output += f'{player2.name : <10}{round((q*100),1): >5}%|{"+" + q_ml if q_ml > 0 else q_ml: >6}'
         await message.channel.send(f'`{output}`')
             
 
