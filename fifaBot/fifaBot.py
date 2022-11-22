@@ -82,7 +82,8 @@ def output_twoleaderboard():
     for team in teams:
         elo_tuples.append((team, int(team["elo"])))
     
-    sorted_elo_tuples = sorted(elo_tuples, key = lambda t: t[1]) #sort teams based on elo
+    sorted_elo_tuples = sorted(elo_tuples, key = lambda t: t[1], reverse=True) #sort teams based on elo
+
     return_string = "Current Doubles Leaderboard: \n"
     for elo_tuple in sorted_elo_tuples:
         team = elo_tuple[0]
