@@ -2,10 +2,10 @@ import discord
 from pymongo import MongoClient
 from datetime import datetime
 from dotenv import load_dotenv
-from fifaBot.player import Player
-from fifaBot.game import Game
-from fifaBot.database_interactions import download_player, download_players, add_player, get_player_names
-from fifaBot.database_interactions import update_head_to_head, get_hashable_key, get_database, update_player_in_mongo
+from player import Player
+from game import Game
+from database_interactions import download_player, download_players, add_player, get_player_names
+from database_interactions import update_head_to_head, get_hashable_key, get_database, update_player_in_mongo
 import os
 
 
