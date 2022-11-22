@@ -87,7 +87,7 @@ def output_twoleaderboard():
     for elo_tuple in sorted_elo_tuples:
         team = elo_tuple[0]
         return_string += str(team["key"]+ ": " + str(team["elo"]) + " record : " + str(team["wins"]) + " - ")
-        return_string += str(team["losses"])
+        return_string += str(team["losses"]) + '\n'
 
     return return_string
     
