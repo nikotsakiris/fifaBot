@@ -3,9 +3,11 @@ import os
 from datetime import datetime
 from fifaBot.player import Player
 from fifaBot.fifaBot import game_input, team_game_input, display_player
-from fifaBot.fifaBot import display_head_to_head, output_leaderboard, add_player, chance
+from fifaBot.fifaBot import display_head_to_head, output_leaderboard, chance
 from fifaBot.fifaBot import probability_to_moneyline
-from fifaBot.database_interactions import download_player, get_player_names
+from fifaBot.database_interactions import download_player, get_player_names, get_team_keys, get_hashable_key
+from fifaBot.database_interactions import add_player, add_team
+
 
 
 discordBotToken = os.environ.get('discordBotToken')
@@ -127,6 +129,29 @@ async def on_message(message):
             output = "player already in database"
         await message.channel.send(f'`{output}`')
         #!add new player
+    
+    if message.content.startswith('!newteam'):
+        valid_teams = get_team_keys()
+        valid_players = get_player_names()
+        text = message.content.split(' ')
+        if (len(text) != 3):
+            output = 'Error in formatting the message: should be of the format "!newplayer (player1) (player2)"'
+        else:
+            player1 = text[1]
+            player2 = text[2]
+            if (player1 not in valid_players):
+                output = "First player not recognized. Initialize them first with !newplayer"
+            elif (player2 not in valid_players):
+                output = "Second player not recognized. Initialize them first with !newplayer"
+            else:
+                key = get_hashable_key(player1, player2)
+                if (key not in valid_teams):
+                    add_team(player1, player2)
+                else:
+                    output = "Team already initialized"
+            
+        await message.channel.send(f'`{output}`')
+        
     
     #return leaderboard
     if message.content.startswith('!leaderboard'):
