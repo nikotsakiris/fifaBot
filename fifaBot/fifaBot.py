@@ -2,7 +2,7 @@ import discord
 from pymongo import MongoClient
 from datetime import datetime
 from dotenv import load_dotenv
-from player import Player
+from .player import Player
 from team import Team
 from game import Game
 from database_interactions import download_player, download_players, add_player, get_player_names, add_game
