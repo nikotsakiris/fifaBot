@@ -138,6 +138,8 @@ def display_head_to_head(player1: str, player2 : str) -> str:
     db = get_database()
     collection = db["HeadToHead"]
     item = collection.find_one( {"key" : key })
+    if (not item):
+        return "These two players don't seem to have a head to head record."
     if player1 == item["user1"]:
         return player1 + "-" + player2 + ": " + str(item["user1wins"]) + "-" + str(item["user2wins"])
     elif player2 == item["user1"]:
