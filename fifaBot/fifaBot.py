@@ -85,7 +85,7 @@ def output_twoleaderboard():
     sorted_elo_tuples = sorted(elo_tuples, key = lambda t: t[1]) #sort teams based on elo
     return_string = "Current Doubles Leaderboard: \n"
     for elo_tuple in sorted_elo_tuples:
-        team = elo_tuple[1]
+        team = elo_tuple[0]
         return_string += str(team["key"]+ ": " + str(team["elo"]) + " record : " + str(team["wins"]) + " - ")
         return_string += str(team["losses"])
 
