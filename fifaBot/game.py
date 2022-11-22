@@ -5,7 +5,7 @@ class Game:
         print("1. Create a new instance of Game.")
         return super().__new__(cls)
 
-    def __init__(self, date, winner, loser, winner_score, loser_score):
+    def __init__(self, date, winner, loser, winner_score : int, loser_score: int):
         print("2. Initialize the new instance of Game.")
         self.date = date # date 'MM/DD/YYYY'
         self.winner = winner #'player_name'

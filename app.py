@@ -71,19 +71,26 @@ async def on_message(message):
     #input a fifa score
     if message.content.startswith('!twogame'):
         valid_players = get_player_names()
+        valid_teams = get_team_keys()
         text = message.content.split(" ")
         if len(text) != 6:
             output = 'Error in formatting the message: should be of the format "!game (winner1 name) (winner2 name) (loser1 name) (loser2 name) (score-score)"'
         elif text[1] not in valid_players or text[2] not in valid_players or text[3] not in valid_players or text[4] not in valid_players:
             output = 'Missing player: one or multiple player names are not in the database. Initialize the new player or check spelling.'
         else:
-            output = "Added game!"
-            scores = text[5].split("-")
-            if int(scores[0]) < int(scores[1]):
-                output = "Change your names and scores around: winner should come first!"
+            winner_key = get_hashable_key(text[1], text[2])
+            loser_key = get_hashable_key(text[3], text[4])
+            if (loser_key not in valid_teams):
+                output = "losing team not recognized. initialize with !newteam"
+            elif (winner_key not in valid_teams):
+                output = "winning team not recognized. initialize with !newteam"
             else:
-                team_game_input(datetime.now(), text[1], text[2], text[3], text[4], scores[0], scores[1]) #FIX
-                output = f'lmao {text[3]} and {text[4]} are trash'
+                scores = text[5].split("-")
+                if int(scores[0]) < int(scores[1]):
+                    output = "Change your names and scores around: winner should come first!"
+                else:
+                    team_game_input(datetime.now(), text[1], text[2], text[3], text[4], scores[0], scores[1]) #FIX
+                    output = f'lmao {text[3]} and {text[4]} are trash'
         await message.channel.send(f'`{output}`')
         #!game (winner name) (loser name) (score-score) (0,1,2)
 
