@@ -100,6 +100,19 @@ def update_player_info(player1, player2, game):
     player2.games_played += 1
 
 
+def probability_to_moneyline(prob):
+    if prob >= 0.5:
+        return int(-(prob)/(1 - prob) * 100)
+    else:
+        return int((1-prob)/prob * 100)
+    
+def chance(player1: Player, player2: Player) -> tuple[float]:
+    #should return a list 2 of two numbers, where:
+        #result[0] = player1's chance of winning
+        #result[1] = player2's chance of winning
+
+    p = calc_expected_wins(player1.elo, player2.elo)
+    return (p, 1-p,)
 
 
         
@@ -317,6 +330,27 @@ async def on_message(message):
     if message.content.startswith('!leaderboard'):
         await message.channel.send(f'`{output_leaderboard()}`')
         #!leaderboard
+    
+    if message.content.startswith('!chance'):
+        text = message.content.split(' ')
+        valid_players = get_player_names()
+        if (len(text) != 3):
+            output = 'Error in formatting the message, should be of the format !chance (lpayer1name) (player2name)'
+        else:
+            player1: Player = download_player(text[1])
+            player2: Player = download_player(text[2])
+            if (player1.name not in valid_players):
+                output = "first player not recognized"
+            elif (player2.name not in valid_players):
+                output = "second player not recognized"
+            else:
+                p, q = chance(player1, player2)
+                p_ml, q_ml = probability_to_moneyline(p), probability_to_moneyline(q)
+                output = f'{"Names" : ^10}|{"Probability": ^10}|{"ML": ^6}'
+                output += f'{player1.name : <10}{(p*100):.1f >10}%|{"+" + p_ml if p_ml > 0 else p_ml: >6}'
+                output += f'{player2.name : <10}{(q*100):.1f >10}%|{"+" + q_ml if q_ml > 0 else q_ml: >6}'
+        await message.channel.send(f'`{output}`')
+            
 
 client.run(discordBotToken)
 
