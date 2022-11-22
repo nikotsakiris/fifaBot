@@ -1,4 +1,4 @@
-from player import Player, Team
+from .player import Player, Team
 from datetime import datetime
 from pymongo import MongoClient
 

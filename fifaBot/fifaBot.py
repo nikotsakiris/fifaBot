@@ -2,8 +2,7 @@ import discord
 from pymongo import MongoClient
 from datetime import datetime
 from dotenv import load_dotenv
-from .player import Player
-from .team import Team
+from .player import Player, Team
 from .game import Game
 from .database_interactions import download_player, download_players, add_player, get_player_names, add_game
 from .database_interactions import update_head_to_head, get_hashable_key, get_database, update_player_in_mongo
@@ -69,8 +68,8 @@ def output_leaderboard():
     return_string = "Current Leaderboard: \n"
     for player_tuple in tuple_list:
         player = player_tuple[0]
-        return_string += str(player.name) + ": " + str(player.elo) + " (wins: "+str(player.wins)+", losses: "
-        return_string += str(player.losses)+", games played: "+str(player.games_played)+") \n"
+        return_string += str(player.name) + ": " + str(player.elo) + " record: "+str(player.wins)+" - "
+        return_string += str(player.losses)+", gp: "+str(player.games_played)+" \n"
     return return_string
 
 def sort_list(list):
