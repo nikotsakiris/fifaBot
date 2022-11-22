@@ -266,6 +266,7 @@ async def on_message(message):
                 output = "Change your names and scores around: winner should come first!"
             else:
                 team_game_input(datetime.now(), text[1], text[2], text[3], text[4], scores[0], scores[1]) #FIX
+                output = f'lmao {text[3]} and {text[4]} are trash'
         await message.channel.send(f'`{output}`')
         #!game (winner name) (loser name) (score-score) (0,1,2)
 
