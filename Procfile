@@ -1,1 +1,1 @@
-worker: python3 fifaBot.py
+worker: python3 app.py

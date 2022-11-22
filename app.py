@@ -45,6 +45,9 @@ async def on_message(message):
     if message.author == client.user:
         return
 
+
+    ####FIFA####
+
     #input a fifa score
     if message.content.startswith('!game'):
         valid_players = get_player_names()
@@ -151,5 +154,8 @@ async def on_message(message):
                 output += f'{player2.name : <15}{round((q*100),1): >9}%|{"+" + str(q_ml) if q_ml > 0 else str(q_ml): >10}'
         await message.channel.send(f'`{output}`')
             
+    ####FIFA####
+
+    
 
 client.run(discordBotToken)
