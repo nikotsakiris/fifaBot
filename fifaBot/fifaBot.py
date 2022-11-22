@@ -150,7 +150,7 @@ def chance(player1: Player, player2: Player) -> tuple[float]:
 
 def chance_teams(team1: Team, team2: Team) -> tuple[float]:
     p = calc_expected_wins(team1.elo, team2.elo)
-    return (p, 1-p)
+    return (p, 1-p,)
 
 def get_hashable_key(winner: str, loser: str) -> str:
     key_list = [winner, loser]
@@ -168,6 +168,9 @@ def display_head_to_head(player1: str, player2 : str) -> str:
         return player1 + "-" + player2 + ": " + str(item["user1wins"]) + "-" + str(item["user2wins"])
     elif player2 == item["user1"]:
         return player1 + "-" + player2 + ": " + str(item["user2wins"]) + "-" + str(item["user1wins"])
+
+def display_twos_head_to_head(player1: str, player2: str):
+    pass
 
 
 def game_input(date, winner, loser, winner_score, loser_score):

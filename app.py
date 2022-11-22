@@ -199,7 +199,7 @@ async def on_message(message):
                     output = "second team not recognized. try initializing with !newteam"
                 else:
                     team1: Team = download_team(text[1], text[2])
-                    team2: Team = download_team(text[1], text[2])
+                    team2: Team = download_team(text[3], text[4])
                     p,q  = chance_teams(team1, team2)
                     p_ml, q_ml = probability_to_moneyline(p), probability_to_moneyline(q)
                     output = f'{"Names" : ^15}|{"P(win)": ^10}|{"ML": ^10}\n'
