@@ -6,7 +6,7 @@ from .player import Player, Team
 from .game import Game
 from .database_interactions import download_player, download_players, add_player, get_player_names, add_game
 from .database_interactions import update_head_to_head, get_hashable_key, get_database, update_player_in_mongo
-from .database_interactions import add_twogame, download_team, update_team_in_mongo
+from .database_interactions import add_twogame, download_team, update_team_in_mongo, get_team_keys
 import os
 
 
@@ -72,6 +72,26 @@ def output_leaderboard():
         return_string += str(player.losses)+", gp: "+str(player.games_played)+", gd: "+str(player.goal_differential)+" \n"
     return return_string
 
+
+def output_twoleaderboard():
+    db = get_database()
+    collection = db["Teams"]
+    teams = collection.find()
+    elo_tuples: list[tuple[any, int]]
+
+    for team in teams:
+        elo_tuples.append((team, int(team["elo"])))
+    
+    sorted_elo_tuples = sorted(elo_tuples, key = lambda t: t[1]) #sort teams based on elo
+    return_string = "Current Doubles Leaderboard: \n"
+    for elo_tuple in sorted_elo_tuples:
+        team = elo_tuple[1]
+        return_string += str(team["key"]+ ": " + str(team["elo"]) + " record : " + str(team["wins"]) + " - ")
+        return_string += str(team["losses"])
+
+    return return_string
+    
+
 def sort_list(list):
     lst = len(list)
     for i in range(0, lst):
@@ -129,7 +149,9 @@ def chance(player1: Player, player2: Player) -> tuple[float]:
 
         
 
-
+def chance_teams(team1: Team, team2: Team) -> tuple[float]:
+    p = calc_expected_wins(team1.elo, team2.elo)
+    return (p, 1-p)
 
 
 
@@ -173,7 +195,7 @@ def game_input(date, winner, loser, winner_score, loser_score):
     
     update_head_to_head(winner, loser)
 
-
+    
 
 def team_game_input(date, winner1, winner2, loser1, loser2, winner_score, loser_score):
 

@@ -2,11 +2,11 @@ import discord
 import os
 from datetime import datetime
 from fifaBot.player import Player, Team
-from fifaBot.fifaBot import game_input, team_game_input, display_player
-from fifaBot.fifaBot import display_head_to_head, output_leaderboard, chance
+from fifaBot.fifaBot import game_input, team_game_input, display_player, output_twoleaderboard
+from fifaBot.fifaBot import display_head_to_head, output_leaderboard, chance, chance_teams
 from fifaBot.fifaBot import probability_to_moneyline
 from fifaBot.database_interactions import download_player, get_player_names, get_team_keys, get_hashable_key
-from fifaBot.database_interactions import add_player, add_team
+from fifaBot.database_interactions import add_player, add_team, download_team
 
 
 
@@ -166,25 +166,47 @@ async def on_message(message):
         await message.channel.send(f'`{output_leaderboard()}`')
         #!leaderboard
     
+    if message.content.startswith('!twoleaderboard'):
+        await message.channel.send(f'`{output_twoleaderboard()}`')
+    
     if message.content.startswith('!chance'):
         text = message.content.split(' ')
         valid_players = get_player_names()
-        if (len(text) != 3):
+        valid_teams = get_team_keys()
+        if (len(text) not in [3,5]):
             output = 'Error in formatting the message, should be of the format !chance (lpayer1name) (player2name)'
         else:
-            player1: Player = download_player(text[1])
-            player2: Player = download_player(text[2])
-            if (player1.name not in valid_players):
-                output = "first player not recognized"
-            elif (player2.name not in valid_players):
-                output = "second player not recognized"
+            if (len(text) == 3):
+                player1: Player = download_player(text[1])
+                player2: Player = download_player(text[2])
+                if (player1.name not in valid_players):
+                    output = "first player not recognized"
+                elif (player2.name not in valid_players):
+                    output = "second player not recognized"
+                else:
+                    p, q = chance(player1, player2)
+                    p_ml, q_ml = probability_to_moneyline(p), probability_to_moneyline(q)
+                    output = f'{"Names" : ^15}|{"P(win)": ^10}|{"ML": ^10}\n'
+                    output += "-" * 15 + "|" + "-"*10 + "|" + "-" * 10 + "\n"
+                    output += f'{player1.name : <15}{round((p*100),1): >9}%|{"+" + str(p_ml) if p_ml > 0 else str(p_ml): >10}\n'
+                    output += f'{player2.name : <15}{round((q*100),1): >9}%|{"+" + str(q_ml) if q_ml > 0 else str(q_ml): >10}'
             else:
-                p, q = chance(player1, player2)
-                p_ml, q_ml = probability_to_moneyline(p), probability_to_moneyline(q)
-                output = f'{"Names" : ^15}|{"P(win)": ^10}|{"ML": ^10}\n'
-                output += "-" * 15 + "|" + "-"*10 + "|" + "-" * 10 + "\n"
-                output += f'{player1.name : <15}{round((p*100),1): >9}%|{"+" + str(p_ml) if p_ml > 0 else str(p_ml): >10}\n'
-                output += f'{player2.name : <15}{round((q*100),1): >9}%|{"+" + str(q_ml) if q_ml > 0 else str(q_ml): >10}'
+                team1key = get_hashable_key(text[1], text[2])
+                team2key = get_hashable_key(text[3], text[4])
+                if (team1key not in valid_teams):
+                    output = "first team not recognized. try initializing with !newteam"
+                elif (team2key not in valid_teams):
+                    output = "second team not recognized. try initializing with !newteam"
+                else:
+                    team1: Team = download_team(text[1], text[2])
+                    team2: Team = download_team(text[1], text[2])
+                    p,q  = chance_teams(team1, team2)
+                    p_ml, q_ml = probability_to_moneyline(p), probability_to_moneyline(q)
+                    output = f'{"Names" : ^15}|{"P(win)": ^10}|{"ML": ^10}\n'
+                    output += "-" * 15 + "|" + "-"*10 + "|" + "-" * 10 + "\n"
+                    output += f'{team1.player1 + "-" + team1.player2 : <15}{round((p*100),1): >9}%|{"+" + str(p_ml) if p_ml > 0 else str(p_ml): >10}\n'
+                    output += f'{team2.player1 + "-" + team2.player2 : <15}{round((q*100),1): >9}%|{"+" + str(q_ml) if q_ml > 0 else str(q_ml): >10}'
+
         await message.channel.send(f'`{output}`')
             
     ####FIFA####

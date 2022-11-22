@@ -253,7 +253,6 @@ def update_team_in_mongo(team : Team) -> None:
             "losses" : team.losses
         }}
     )
-
     pass
   
 # This is added so that many files can reuse the function get_database()
