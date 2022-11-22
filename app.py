@@ -64,7 +64,7 @@ async def on_message(message):
             if int(scores[0]) < int(scores[1]):
                 output = "Change your names and scores around: winner should come first!"
             else:
-                game_input(datetime.now(), text[1], text[2], scores[0], scores[1]) #FIX
+                game_input(datetime.now(), text[1], text[2], int(scores[0]), int(scores[1])) #FIX
         await message.channel.send(f'`{output}`')
         #!game (winner name) (loser name) (score-score) (0,1,2)
 
