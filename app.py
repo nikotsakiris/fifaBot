@@ -49,7 +49,7 @@ async def on_message(message):
         await message.channel.send(f'`{bang_teamstats(message.content.split(" "))}`')
 
     if message.content.startswith('!fifahelp'):
-        await message.channel.send(bang_fifahelp)
+        await message.channel.send(f'`{bang_fifahelp()}`')
 
     if message.content.startswith('!newplayer'):
         await message.channel.send(f'`{bang_newplayer(message.content.split(" "))}`')
