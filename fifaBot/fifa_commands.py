@@ -116,10 +116,10 @@ def bang_teamstats(text: list[str]) -> str:
     team2 = download_team(text[3], text[4])
     return display_twos_head_to_head(team1, team2)
     
-def bang_leaderboard(text: list[str]) -> str:
+def bang_leaderboard() -> str:
     return output_leaderboard()
 
-def bang_twoleaderboard(text: list[str]) -> str:
+def bang_twoleaderboard() -> str:
     return output_twoleaderboard()
 
 def bang_fifahelp() -> str:
