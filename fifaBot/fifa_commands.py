@@ -86,6 +86,10 @@ def bang_stats(text: list[str]) ->str:
     elif (len(text) == 3):
         if text[1] not in valid_players:
             return "first player not found"
+        elif text[2] == "SP":
+            return display_player(text[1], "SP")
+        elif text[2] == "MP":
+            return display_player(text[1], "MP")
         elif text[2] not in valid_players:
             return  "second player not found"
         else:

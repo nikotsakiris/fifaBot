@@ -3,7 +3,7 @@ class Player:
         print("1. Create a new instance of Player.")
         return super().__new__(cls)
 
-    def __init__(self, name, elo, wins, losses, games_played, goals_for, goals_against, goal_differential):
+    def __init__(self, name, elo, wins, losses, games_played, goals_for, goals_against, goal_differential, two_wins, two_losses, two_games_played):
         print("2. Initialize the new instance of Player.")
         self.name = name
         self.elo = elo
@@ -13,19 +13,30 @@ class Player:
         self.goals_for = goals_for
         self.goals_against = goals_against
         self.goal_differential = goal_differential
+        self.two_wins = two_wins
+        self.two_losses = two_losses
+        self.two_games_played = two_games_played
         
-    def get_record(self):
+    def get_record(self) -> list[int]:
         return [self.wins, self.losses]
 
-    def get_goals_per_game(self):
+    def get_goals_per_game(self) -> int:
         return self.goals_for/self.games_played
 
-    def get_goals_against_per_game(self):
+    def get_goals_against_per_game(self) -> int:
         return self.goals_against/self.games_played
 
-    def __repr__(self) -> str:
-        return f"{self.name} {self.elo}, record: {self.wins} - {self.losses}, gp: {self.games_played}, gd: {self.goal_differential}"
+    def get_one_player_stats(self) -> str:
+        return f"Singleplayer: {self.name} ({self.elo}) \nW-L: {self.wins}-{self.losses}  MP: {self.games_played}  GD: {self.goal_differential}\
+            \nGoals/Game: {round(self.get_goals_per_game(), 2)}  Goals Against/Game: {round(self.get_goals_against_per_game(), 2)}"
 
+    def get_two_player_stats(self) -> str:
+        return  f"Multiplayer: {self.name}  \nW-L: {self.two_wins}-{self.two_losses}  MP: {self.two_games_played}"
+
+    def __repr__(self) -> str:
+        return f"{type(self).__name__} {self.name} ({self.elo}) \nW-L: {self.wins}-{self.losses}  MP: {self.games_played}  \
+        GD: {self.goal_differential}\nGoals/Game: {round(self.get_goals_per_game(), 2)}  \
+        Goals Against/Game:{round(self.get_goals_against_per_game(), 2)}\nDoubles W-L: {self.two_wins}-{self.two_losses}  Doubles MP: {self.two_games_played}"
 
 
 class Team: 
@@ -43,4 +54,4 @@ class Team:
         return [self.wins, self.losses]
     
     def __repr__(self) -> str:
-        return f"{self.key} {self.elo}, record: {self.wins} - {self.losses}, gp: {self.games_played}"
+        return f"{self.key} ({self.elo})  W-L: {self.wins}-{self.losses}  MP: {self.games_played}"

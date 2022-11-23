@@ -21,22 +21,22 @@ def get_database():
  
    return client['Fifa-Scores']
   
-
-
 def get_hashable_key(winner: str, loser: str) -> str:
     key_list = [winner, loser]
     key_list.sort()
     return key_list[0] + "-" + key_list[1]
+
 
 def download_player(name: str) -> Player:
     #Takes in name of player as a string and returns that player object or throws exception
     db = get_database()
     collection = db['Players']
     item = collection.find_one( { "name" : name} )
-    result = Player(item["name"], int(item["elo"]), int(item["wins"]), int(item["losses"]), int(item["games_played"]), int(item["goals_for"]), int(item["goals_against"]), int(item["goal_differential"]))
+    result = Player(item["name"], int(item["elo"]), int(item["wins"]), int(item["losses"]), int(item["games_played"]), int(item["goals_for"]),\
+         int(item["goals_against"]), int(item["goal_differential"]), int(item["two_wins"]), int(item["two_losses"], int(item["two_games_played"])))
     return result
 
-def download_team(player1:str, player2:str)->Team:
+def download_team(player1:str, player2:str) -> Team:
     db = get_database()
     collection = db['Teams']
     key = get_hashable_key(player1, player2)
@@ -53,7 +53,8 @@ def download_players() -> list[Player]:
     collection = db["Players"]
     items = collection.find()
     for item in items:
-        player_object = Player(item["name"], int(item["elo"]), int(item["wins"]), int(item["losses"]), int(item["games_played"]), int(item["goals_for"]), int(item["goals_against"]), int(item["goal_differential"]))
+        player_object = Player(item["name"], int(item["elo"]), int(item["wins"]), int(item["losses"]), int(item["games_played"]), int(item["goals_for"]),\
+             int(item["goals_against"]), int(item["goal_differential"]), int(item["two_wins"]), int(item["two_losses"], int(item["two_games_played"])))
         result.append(player_object)
     return result
 
@@ -69,7 +70,10 @@ def add_player(player_name:str) -> None:
         "games_played" : 0,
         "goals_for" : 0,
         "goals_against" : 0,
-        "goal_differential" : 0
+        "goal_differential" : 0,
+        "two_wins" : 0,
+        "two_losses" : 0,
+        "two_games_played" : 0
     }
     collection.insert_one(info)
 
@@ -198,7 +202,7 @@ def update_twos_head_to_head(winners: list[str], losers: list[str]) -> None:
 
 
 #add a game to the database by creating an instance and uploading
-def add_game(winner:str, loser:str, scores:list, time: datetime):
+def add_game(winner:str, loser:str, scores:list, time: datetime) -> None:
     db = get_database()
     collection = db["Games"]
     info = {
@@ -209,7 +213,6 @@ def add_game(winner:str, loser:str, scores:list, time: datetime):
         "loser_score" : scores[1]
     }
     collection.insert_one(info)
-
 
 def add_twogame(winner1:str, winner2:str, loser1:str, loser2: str, time:datetime, scores:list[int]) -> None:
     db = get_database()
@@ -225,35 +228,39 @@ def add_twogame(winner1:str, winner2:str, loser1:str, loser2: str, time:datetime
     }
     collection.insert_one(info)
 
-def update_player_in_mongo(player :Player) -> None:
+def update_players_in_mongo(players: list[Player]) -> None: #Opportunities to Multithread
     db = get_database()
     collection = db["Players"]
-    collection.find_one_and_update(
-        {"name" : player.name}, 
-        {"$set" : { 
-            "elo" : player.elo, 
-            "games_played" : player.games_played,
-            "wins" : player.wins,
-            "losses" : player.losses,
-            "goals_for" : player.goals_for,
-            "goals_against" : player.goals_against,
-            "goal_differential" : player.goal_differential
-        }}
-    )
+    for player in players:
+        collection.find_one_and_update(
+            {"name" : player.name}, 
+            {"$set" : { 
+                "elo" : player.elo, 
+                "games_played" : player.games_played,
+                "wins" : player.wins,
+                "losses" : player.losses,
+                "goals_for" : player.goals_for,
+                "goals_against" : player.goals_against,
+                "goal_differential" : player.goal_differential,
+                "two_wins" : player.two_wins,
+                "two_losses" : player.two_losses,
+                "two_games_played" : player.two_games_played
+            }}
+        )
 
-def update_team_in_mongo(team : Team) -> None:
+def update_teams_in_mongo(teams: list[Team]) -> None: #Opportunities to Multithread
     db = get_database()
     collection = db["Teams"]
-    collection.find_one_and_update(
-        {"key" : team.key},
-        { "$set" : {
-            "elo" : team.elo,
-            "games_played" : team.games_played,
-            "wins" : team.wins,
-            "losses" : team.losses
-        }}
-    )
-    pass
+    for team in teams:
+        collection.find_one_and_update(
+            {"key" : team.key},
+            { "$set" : {
+                "elo" : team.elo,
+                "games_played" : team.games_played,
+                "wins" : team.wins,
+                "losses" : team.losses
+            }}
+        )
   
 # This is added so that many files can reuse the function get_database()
 if __name__ == "__main__":   
