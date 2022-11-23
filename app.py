@@ -58,7 +58,7 @@ async def on_message(message):
         await message.channel.send(f'`{bang_newteam(message.content.split(" "))}`')
         
     if message.content.startswith('!leaderboard'):
-        await message.channel.send(f'`{bang_leaderboard}`')
+        await message.channel.send(f'`{bang_leaderboard()}`')
     
     if message.content.startswith('!twoleaderboard'):
         await message.channel.send(f'`{bang_twoleaderboard()}`')
