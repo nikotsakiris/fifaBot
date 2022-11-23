@@ -7,6 +7,7 @@ from .game import Game
 from .database_interactions import download_player, download_players, add_player, get_player_names, add_game
 from .database_interactions import update_head_to_head, get_hashable_key, get_database, update_player_in_mongo
 from .database_interactions import add_twogame, download_team, update_team_in_mongo, get_team_keys
+from .database_interactions import update_twos_head_to_head
 import os
 
 
@@ -169,8 +170,21 @@ def display_head_to_head(player1: str, player2 : str) -> str:
     elif player2 == item["user1"]:
         return player1 + "-" + player2 + ": " + str(item["user2wins"]) + "-" + str(item["user1wins"])
 
-def display_twos_head_to_head(player1: str, player2: str):
-    pass
+
+
+def display_twos_head_to_head(team1: Team, team2: Team) -> str:
+
+    key = get_hashable_key(team1.key, team2.key)
+    db = get_database()
+    collection = db["HeadToHead"]
+    item = collection.find_one( {"key" : key})
+    if (not item):
+        return "These two teams don't seem to have a head to head record."
+    if team1.key == item["team1"]:
+        return team1.key + " vs " + team2.key + + str(item["team1wins"]) + "-" + str(item["team2wins"])
+    elif team2.key == item["team1"]:
+        return team1.key + " vs " + team2.key + + str(item["team2wins"]) + "-" + str(item["team1wins"])
+
 
 
 def game_input(date, winner, loser, winner_score, loser_score):
@@ -195,6 +209,7 @@ def team_game_input(date, winner1, winner2, loser1, loser2, winner_score, loser_
     update_2player_info(winning_team, losing_team)
     update_team_in_mongo(winning_team)
     update_team_in_mongo(losing_team)
+    update_twos_head_to_head([winner1, winner2], [loser1, loser2])
     
 
 
@@ -228,5 +243,6 @@ def display_player(player_name : str):
     player_obj = download_player(player_name)
     return repr(player_obj)
 
-
+def display_team(team: Team):
+    return repr(team)
 

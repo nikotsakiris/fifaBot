@@ -41,3 +41,6 @@ class Team:
     
     def get_record(self) -> list[int]:
         return [self.wins, self.losses]
+    
+    def __repr__(self) -> str:
+        return f"{self.key} {self.elo}, record: {self.wins} - {self.losses}, gp: {self.games_played}"

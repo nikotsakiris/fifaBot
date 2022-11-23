@@ -4,7 +4,7 @@ from datetime import datetime
 from fifaBot.player import Player, Team
 from fifaBot.fifaBot import game_input, team_game_input, display_player, output_twoleaderboard
 from fifaBot.fifaBot import display_head_to_head, output_leaderboard, chance, chance_teams
-from fifaBot.fifaBot import probability_to_moneyline
+from fifaBot.fifaBot import probability_to_moneyline, display_team, display_twos_head_to_head
 from fifaBot.database_interactions import download_player, get_player_names, get_team_keys, get_hashable_key
 from fifaBot.database_interactions import add_player, add_team, download_team
 
@@ -116,6 +116,35 @@ async def on_message(message):
             output = 'Error in formatting the message: should be of the format "!stats (playername) optional(playername)"'
         await message.channel.send(f'`{output}`')
         #!stats (winner name) (option: loser name)
+
+    if message.content.startswith('!teamstats'):
+        text = message.content.split(" ")
+        valid_teams = get_team_keys()
+        if (len(text) not in [3, 5]):
+            output = 'Error in formatting the message: should be of the format "!stats (playername) (playername) optional(playername playername)"'
+        else:
+            if (len(text) == 3):
+                #single team stats
+                key = get_hashable_key(text[1], text[2])
+                if (key not in valid_teams):
+                    output = "Team not initialized. try !newteam"
+                else:
+                    team = download_team(text[1], text[2])
+                    output = display_team(team)
+            else:
+                #double team head-to-head
+                key1 = get_hashable_key(text[1], text[2])
+                key2 = get_hashable_key(text[3], text[4])
+                if (key1 not in valid_teams):
+                    output = "first team not initialized. try !newteam"
+                elif (key2 not in valid_teams):
+                    output = "second team not initalized. try !newteam"
+                else:
+                    team1 = download_team(text[1], text[2])
+                    team2 = download_team(text[3], text[4])
+                    output = display_twos_head_to_head(team1, team2)
+
+        await message.channel.send(f'`{output}`')
 
     #get help
     if message.content.startswith('!help'):
