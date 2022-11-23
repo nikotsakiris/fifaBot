@@ -39,7 +39,7 @@ Get the odds of either player winning and the associated moneylines.
 Get the odds of either duo winning and the associated moneylines. 
 
 **HELP** 
-*“!help”* 
+*“!fifahelp”* 
 This is your help!'''
 
 def bang_game(text: list[str]) -> str:
