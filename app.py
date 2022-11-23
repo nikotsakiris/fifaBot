@@ -11,7 +11,7 @@ from fifaBot.fifa_commands import bang_twoleaderboard, bang_newteam
 discordBotToken = os.environ.get('discordBotToken')
 helpMessage = '''**Commands:**
 **FIFA COMMANDS**
-*“!fifahelp*
+*“!fifahelp"*
 See commands for FIFA functionality
 
 More coming soon! Talk to your local Sigma Dev!
