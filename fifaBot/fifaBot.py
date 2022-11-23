@@ -181,9 +181,9 @@ def display_twos_head_to_head(team1: Team, team2: Team) -> str:
     if (not item):
         return "These two teams don't seem to have a head to head record."
     if team1.key == item["team1"]:
-        return team1.key + " vs " + team2.key + + str(item["team1wins"]) + "-" + str(item["team2wins"])
+        return team1.key + " vs " + team2.key + str(item["team1wins"]) + "-" + str(item["team2wins"])
     elif team2.key == item["team1"]:
-        return team1.key + " vs " + team2.key + + str(item["team2wins"]) + "-" + str(item["team1wins"])
+        return team1.key + " vs " + team2.key + str(item["team2wins"]) + "-" + str(item["team1wins"])
 
 
 
