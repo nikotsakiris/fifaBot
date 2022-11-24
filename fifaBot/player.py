@@ -41,7 +41,7 @@ class Player:
     def get_two_player_stats(self) -> str:
         if self.two_games_played == 0:
             return f"No multiplayer stats available. 0 multiplayer games played"
-        return  f" Multiplayer: {self.name}\n W-L: {self.two_wins}-{self.two_losses}  MP: {self.two_games_played} "
+        return  f" Multiplayer: {self.name} \n W-L: {self.two_wins}-{self.two_losses}  MP: {self.two_games_played} "
 
     def __repr__(self) -> str:
         if self.games_played == 0 or self.two_games_played == 0:
