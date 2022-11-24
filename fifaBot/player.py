@@ -36,12 +36,12 @@ class Player:
             return f"No singleplayer stats available. 0 singleplayer games played"
         return f" Singleplayer: {self.name} ({self.elo})\
             \n Win %: {self.get_solo_win_percentage()}  W-L: {self.wins}-{self.losses}  MP: {self.games_played}\
-            \n GD: {self.goal_differential}  GF/Game: {round(self.get_goals_per_game(), 2)}  GA/Game: {round(self.get_goals_against_per_game(), 2)}"
+            \n GD: {self.goal_differential}  GF/Game: {round(self.get_goals_per_game(), 2)}  GA/Game: {round(self.get_goals_against_per_game(), 2)} "
 
     def get_two_player_stats(self) -> str:
         if self.two_games_played == 0:
             return f"No multiplayer stats available. 0 multiplayer games played"
-        return  f" Multiplayer: {self.name}\n W-L: {self.two_wins}-{self.two_losses}  MP: {self.two_games_played}"
+        return  f" Multiplayer: {self.name}\n W-L: {self.two_wins}-{self.two_losses}  MP: {self.two_games_played} "
 
     def __repr__(self) -> str:
         if self.games_played == 0 or self.two_games_played == 0:
