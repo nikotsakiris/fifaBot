@@ -26,14 +26,25 @@ class Player:
     def get_goals_against_per_game(self) -> int:
         return self.goals_against/self.games_played
 
+    def get_win_percentage(self) -> float:
+        if self.games_played == 0:
+            return 0.00
+        return round(self.wins/self.games_played*100, 2)
+
     def get_one_player_stats(self) -> str:
+        if self.games_played == 0:
+            return f"No singleplayer stats available. 0 singleplayer games played"
         return f"Singleplayer: {self.name} ({self.elo}) \nW-L: {self.wins}-{self.losses}  MP: {self.games_played}  GD: {self.goal_differential}\
             \nGoals/Game: {round(self.get_goals_per_game(), 2)}  Goals Against/Game: {round(self.get_goals_against_per_game(), 2)}"
 
     def get_two_player_stats(self) -> str:
+        if self.two_games_played == 0:
+            return f"No multiplayer stats available. 0 multiplayer games played"
         return  f"Multiplayer: {self.name}  \nW-L: {self.two_wins}-{self.two_losses}  MP: {self.two_games_played}"
 
     def __repr__(self) -> str:
+        if self.games_played == 0 or self.two_games_played == 0:
+            return f"Full stats not available. Choose \"SP\" or \"MP\" stats"
         return f"{type(self).__name__} {self.name} ({self.elo}) \nW-L: {self.wins}-{self.losses}  MP: {self.games_played}  \
         GD: {self.goal_differential}\nGoals/Game: {round(self.get_goals_per_game(), 2)}  \
         Goals Against/Game:{round(self.get_goals_against_per_game(), 2)}\nDoubles W-L: {self.two_wins}-{self.two_losses}  Doubles MP: {self.two_games_played}"
