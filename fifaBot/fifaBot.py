@@ -169,7 +169,7 @@ def update_player_info(player1, player2, game):
     
     goal_differential = game.winner_score - game.loser_score
     player1.goal_differential, player2.goal_differential = player1.goal_differential+goal_differential, player2.goal_differential-goal_differential #update GD
-    player1.games_played, player2.games_player = player1.games_played+1, player2.games_played+1 #update MP
+    player1.games_played, player2.games_played = player1.games_played+1, player2.games_played+1 #update MP
 
 def team_game_input(date, winner1, winner2, loser1, loser2, winner_score, loser_score):
     two_game = TwoGame(winner1, winner2, loser1, loser2, date, winner_score, loser_score)
