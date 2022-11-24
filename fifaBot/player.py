@@ -34,20 +34,21 @@ class Player:
     def get_one_player_stats(self) -> str:
         if self.games_played == 0:
             return f"No singleplayer stats available. 0 singleplayer games played"
-        return f"Singleplayer: {self.name} ({self.elo}) \nW-L: {self.wins}-{self.losses}  MP: {self.games_played}  GD: {self.goal_differential}\
-            \nGoals/Game: {round(self.get_goals_per_game(), 2)}  Goals Against/Game: {round(self.get_goals_against_per_game(), 2)}"
+        return f"Singleplayer: {self.name} ({self.elo})\
+            \n W-L: {self.wins}-{self.losses}  MP: {self.games_played}  GD: {self.goal_differential}\
+            \n Goals/Game: {round(self.get_goals_per_game(), 2)}  Goals Against/Game: {round(self.get_goals_against_per_game(), 2)}"
 
     def get_two_player_stats(self) -> str:
         if self.two_games_played == 0:
             return f"No multiplayer stats available. 0 multiplayer games played"
-        return  f"Multiplayer: {self.name}  \nW-L: {self.two_wins}-{self.two_losses}  MP: {self.two_games_played}"
+        return  f"Multiplayer: {self.name}\n W-L: {self.two_wins}-{self.two_losses}  MP: {self.two_games_played}"
 
     def __repr__(self) -> str:
         if self.games_played == 0 or self.two_games_played == 0:
             return f"Full stats not available. Choose \"SP\" or \"MP\" stats"
-        return f"{type(self).__name__} {self.name} ({self.elo}) \nW-L: {self.wins}-{self.losses}  MP: {self.games_played}  \
-        GD: {self.goal_differential}\nGoals/Game: {round(self.get_goals_per_game(), 2)}  \
-        Goals Against/Game:{round(self.get_goals_against_per_game(), 2)}\nDoubles W-L: {self.two_wins}-{self.two_losses}  Doubles MP: {self.two_games_played}"
+        return f"{type(self).__name__} {self.name} ({self.elo}) \n W-L: {self.wins}-{self.losses}  MP: {self.games_played} GD: {self.goal_differential}\
+            \n Goals/Game: {round(self.get_goals_per_game(), 2)}  Goals Against/Game: {round(self.get_goals_against_per_game(), 2)}\
+            \n Doubles W-L: {self.two_wins}-{self.two_losses}  Doubles MP: {self.two_games_played}"
 
 
 class Team: 
