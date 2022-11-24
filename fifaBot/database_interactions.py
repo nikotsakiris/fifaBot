@@ -33,7 +33,7 @@ def download_player(name: str) -> Player:
     collection = db['Players']
     item = collection.find_one( { "name" : name} )
     result = Player(item["name"], int(item["elo"]), int(item["wins"]), int(item["losses"]), int(item["games_played"]), int(item["goals_for"]),\
-         int(item["goals_against"]), int(item["goal_differential"]), int(item["two_wins"]), int(item["two_losses"], int(item["two_games_played"])))
+         int(item["goals_against"]), int(item["goal_differential"]), int(item["two_wins"]), int(item["two_losses"]), int(item["two_games_played"]))
     return result
 
 def download_team(player1:str, player2:str) -> Team:
