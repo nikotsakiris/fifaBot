@@ -54,7 +54,7 @@ def download_players() -> list[Player]:
     items = collection.find()
     for item in items:
         player_object = Player(item["name"], int(item["elo"]), int(item["wins"]), int(item["losses"]), int(item["games_played"]), int(item["goals_for"]),\
-             int(item["goals_against"]), int(item["goal_differential"]), int(item["two_wins"]), int(item["two_losses"], int(item["two_games_played"])))
+             int(item["goals_against"]), int(item["goal_differential"]), int(item["two_wins"]), int(item["two_losses"]), int(item["two_games_played"]))
         result.append(player_object)
     return result
 
