@@ -229,3 +229,30 @@ def display_player(player_name: str, stats=None) -> str:
 def display_team(team: Team):
     return repr(team)
 
+def new_team_game_input(date, winner1, winner2, loser1, loser2, winner_score, loser_score):
+    two_game = TwoGame(winner1, winner2, loser1, loser2, date, winner_score, loser_score)
+    add_twogame(winner1, winner2, loser1, loser2, date, [winner_score, loser_score])
+    players = [download_player(winner1), download_player(winner2), download_player(loser1), download_player(loser2)]
+    update_twos_player_info(players, two_game)
+    update_players_in_mongo(players)
+
+def new_update_twos_player_info(players: list[Player], game: TwoGame) -> None:
+    winning_elo = (players[0].elo + players[1].elo)/2
+    losing_elo = (players[2].elo + players[3].elo)/2
+
+    elo_deltas = calculate_elo_changes(winning_elo.elo, losing_elo.elo) #calculate elos
+    goal_differential = game.winner_score - game.loser_score
+    for count, player in enumerate(players):
+        if count in [0,1]:
+            player.elo += elo_deltas[0]
+            player.two_wins += 1
+            player.goals_for += game.winner_score
+            player.goals_against += game.loser_score
+            player.goal_differential += goal_differential
+        else:
+            player.elo += elo_deltas[1]
+            player.two_losses += 1
+            player.goals_for += game.loser_score
+            player.goals_against += game.winner_score
+            player.goal_differential -= goal_differential
+        player.two_games_played += 1
